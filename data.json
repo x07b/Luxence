@@ -1,0 +1,125 @@
+{
+  "collections": [
+    {
+      "id": "panels",
+      "name": "Panneaux LED",
+      "slug": "panels",
+      "description": "Collection de panneaux LED"
+    }
+  ],
+  "products": [
+    {
+      "id": "led-panel-light",
+      "collectionId": "panels",
+      "name": "LED Frameless Panel Light",
+      "description": "Panneau LED encastrable, design minimaliste et haute performance lumineuse.",
+      "price": 49,
+      "images": [
+        "https://cdn.builder.io/api/v1/image/assets%2F4bd5a48984ac41abb50f4c9c327d1d89%2F51c4ee0b186648aaa95eea0393361312?format=webp&width=800",
+        "/uploads/1767578053856-u3wkoq.png"
+      ],
+      "category": "Panneaux LED",
+      "slug": "led-frameless-panel-light",
+      "pdfFile": "/uploads/1767578064538-4f8v5.pdf",
+      "pdfFilename": "fichier.pdf",
+      "specifications": [
+        {
+          "label": "Puissance",
+          "value": "10W"
+        },
+        {
+          "label": "Forme",
+          "value": "Ronde"
+        },
+        {
+          "label": "Type",
+          "value": "Encastré"
+        },
+        {
+          "label": "Couleur",
+          "value": "Blanc"
+        },
+        {
+          "label": "Température de couleur",
+          "value": "6500K"
+        },
+        {
+          "label": "Flux lumineux",
+          "value": "1200 lm"
+        },
+        {
+          "label": "Durée de vie",
+          "value": "3000 heures"
+        },
+        {
+          "label": "Certification",
+          "value": "CE"
+        },
+        {
+          "label": "Indice de protection",
+          "value": "IP20"
+        },
+        {
+          "label": "Pays d'origine",
+          "value": "Fabriqué en Chine"
+        }
+      ]
+    },
+    {
+      "id": "led-panel-light-round",
+      "collectionId": "panels",
+      "name": "LED Panel Light Round",
+      "description": "Panneau LED encastrable rond haute performance, longue durée de vie et économie d'énergie.",
+      "price": 49,
+      "images": [
+        "https://cdn.builder.io/api/v1/image/assets%2Fcbe2eec5db404214a3a4db1cb75a5758%2Fb16ebe3730ac4e5f9a4fb71cf3ee89d5?format=webp&width=800"
+      ],
+      "category": "Panneaux LED",
+      "slug": "led-panel-light-round",
+      "pdfFile": null,
+      "pdfFilename": null,
+      "specifications": [
+        {
+          "label": "Puissance",
+          "value": "18W"
+        },
+        {
+          "label": "Forme",
+          "value": "Ronde"
+        },
+        {
+          "label": "Type",
+          "value": "Encastré"
+        },
+        {
+          "label": "Couleur",
+          "value": "Blanc"
+        },
+        {
+          "label": "Température de couleur",
+          "value": "3000K"
+        },
+        {
+          "label": "Flux lumineux",
+          "value": "1800 lm"
+        },
+        {
+          "label": "Durée de vie",
+          "value": "30000 heures"
+        },
+        {
+          "label": "Certification",
+          "value": "CE"
+        },
+        {
+          "label": "Indice de protection",
+          "value": "IP20"
+        },
+        {
+          "label": "Pays d'origine",
+          "value": "Fabriqué en Chine"
+        }
+      ]
+    }
+  ]
+}
