@@ -69,22 +69,89 @@ async function sendContactEmail(data: {
   subject: string;
   message: string;
 }): Promise<boolean> {
-
   try {
-    const adminEmail =
-      process.env.ADMIN_EMAIL || "fboudhraa2@gmail.com";
+    const adminEmail = process.env.ADMIN_EMAIL || "fboudhraa2@gmail.com";
 
     const html = `
-      <h2>Nouveau message</h2>
-      <p><b>Nom:</b> ${escapeHtml(data.name)}</p>
-      <p><b>Email:</b> ${escapeHtml(data.email)}</p>
-      <p><b>Sujet:</b> ${escapeHtml(data.subject)}</p>
-      <p>${escapeHtml(data.message)}</p>
+      <div style="margin:0;padding:0;background-color:#f3f4f6;font-family:Arial,sans-serif;color:#111827;">
+        <div style="max-width:640px;margin:0 auto;padding:32px 16px;">
+          <div style="background-color:#ffffff;border-radius:14px;overflow:hidden;box-shadow:0 4px 18px rgba(0,0,0,0.08);">
+
+            <div style="background:#111827;padding:28px 24px;text-align:center;">
+              <h1 style="margin:0;color:#ffffff;font-size:24px;">Luxence</h1>
+              <p style="margin:8px 0 0;color:#d1d5db;font-size:13px;">
+                Nouveau message de contact
+              </p>
+            </div>
+
+            <div style="padding:32px 24px;">
+              <h2 style="margin:0 0 16px;font-size:22px;color:#1f2937;">
+                Nouvelle demande reçue
+              </h2>
+
+              <p style="margin:0 0 20px;line-height:1.6;color:#4b5563;">
+                Un nouveau message a été envoyé depuis le formulaire de contact du site.
+              </p>
+
+              <div style="background:#fff7ed;border-left:4px solid #f59e0b;padding:16px;border-radius:8px;margin-bottom:24px;">
+                <p style="margin:0;color:#92400e;line-height:1.6;">
+                  <strong>Action requise :</strong> merci de consulter ce message et de répondre au client dans les meilleurs délais.
+                </p>
+              </div>
+
+              <table style="width:100%;border-collapse:collapse;margin:0 0 24px;">
+                <tbody>
+                  <tr>
+                    <td style="padding:12px;background:#f9fafb;border:1px solid #e5e7eb;font-weight:bold;color:#374151;width:160px;">
+                      Nom
+                    </td>
+                    <td style="padding:12px;border:1px solid #e5e7eb;color:#111827;">
+                      ${escapeHtml(data.name)}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding:12px;background:#f9fafb;border:1px solid #e5e7eb;font-weight:bold;color:#374151;">
+                      Email
+                    </td>
+                    <td style="padding:12px;border:1px solid #e5e7eb;color:#111827;">
+                      <a href="mailto:${escapeHtml(data.email)}" style="color:#2563eb;text-decoration:none;">
+                        ${escapeHtml(data.email)}
+                      </a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding:12px;background:#f9fafb;border:1px solid #e5e7eb;font-weight:bold;color:#374151;">
+                      Sujet
+                    </td>
+                    <td style="padding:12px;border:1px solid #e5e7eb;color:#111827;">
+                      ${escapeHtml(data.subject)}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <h3 style="margin:0 0 12px;font-size:18px;color:#1f2937;">Message du client</h3>
+
+              <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:18px;color:#374151;line-height:1.7;white-space:pre-wrap;">
+                ${escapeHtml(data.message)}
+              </div>
+            </div>
+
+            <div style="background:#f9fafb;padding:20px 24px;border-top:1px solid #e5e7eb;">
+              <p style="margin:0 0 6px;font-size:14px;font-weight:bold;color:#111827;">Luxence</p>
+              <p style="margin:0;font-size:13px;color:#6b7280;line-height:1.6;">
+                Notification automatique du formulaire de contact.
+              </p>
+            </div>
+
+          </div>
+        </div>
+      </div>
     `;
 
     const result = await sendEmail({
       to: adminEmail,
-      subject: `Contact: ${data.subject}`,
+      subject: `Nouveau message de contact - ${data.subject}`,
       html,
     });
 
