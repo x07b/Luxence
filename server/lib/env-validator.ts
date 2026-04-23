@@ -1,6 +1,6 @@
 /**
  * Environment Variable Validator
- * PostgreSQL-based validation after removing Supabase
+ * PostgreSQL-based validation
  */
 
 export interface EnvConfig {
@@ -11,8 +11,8 @@ export interface EnvConfig {
 
 const ENV_CONFIG: EnvConfig = {
   required: ["DB_HOST", "DB_PORT", "DB_NAME", "DB_USER", "DB_PASSWORD"],
-  requiredForProduction: ["RESEND_API_KEY"],
-  optional: ["NODE_ENV", "ADMIN_EMAIL", "PING_MESSAGE", "PORT"],
+  requiredForProduction: ["SMTP_HOST", "SMTP_PORT", "SMTP_USER", "SMTP_PASS"],
+  optional: ["NODE_ENV", "ADMIN_EMAIL", "PING_MESSAGE", "PORT", "SENDER_EMAIL"],
 };
 
 export function validateEnv(): {
@@ -44,11 +44,22 @@ export function validateEnv(): {
     errors.push("DB_PORT must be a valid number");
   }
 
+  if (process.env.SMTP_PORT && Number.isNaN(Number(process.env.SMTP_PORT))) {
+    errors.push("SMTP_PORT must be a valid number");
+  }
+
   if (
     process.env.ADMIN_EMAIL &&
     !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(process.env.ADMIN_EMAIL)
   ) {
     warnings.push("ADMIN_EMAIL does not appear to be a valid email address");
+  }
+
+  if (
+    process.env.SENDER_EMAIL &&
+    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(process.env.SENDER_EMAIL)
+  ) {
+    warnings.push("SENDER_EMAIL does not appear to be a valid email address");
   }
 
   return {
@@ -95,7 +106,11 @@ export function getEnvSummary() {
     hasDbName: !!process.env.DB_NAME,
     hasDbUser: !!process.env.DB_USER,
     hasDbPassword: !!process.env.DB_PASSWORD,
-    hasResendKey: !!process.env.RESEND_API_KEY,
+    hasSmtpHost: !!process.env.SMTP_HOST,
+    hasSmtpPort: !!process.env.SMTP_PORT,
+    hasSmtpUser: !!process.env.SMTP_USER,
+    hasSmtpPass: !!process.env.SMTP_PASS,
     adminEmail: process.env.ADMIN_EMAIL || "not set",
+    senderEmail: process.env.SENDER_EMAIL || "not set",
   };
 }
