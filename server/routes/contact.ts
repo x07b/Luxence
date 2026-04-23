@@ -69,14 +69,10 @@ async function sendContactEmail(data: {
   subject: string;
   message: string;
 }): Promise<boolean> {
-  if (!process.env.RESEND_API_KEY) {
-    console.log("Email not configured");
-    return false;
-  }
 
   try {
     const adminEmail =
-      process.env.ADMIN_EMAIL || "itsazizsaidi@gmail.com";
+      process.env.ADMIN_EMAIL || "fboudhraa2@gmail.com";
 
     const html = `
       <h2>Nouveau message</h2>
