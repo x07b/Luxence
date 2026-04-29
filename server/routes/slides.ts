@@ -19,22 +19,21 @@ function dbSlideToApi(dbSlide: any): HeroSlide {
     image: dbSlide.image,
     alt: dbSlide.alt || "Hero slide",
     order: dbSlide.order_index || 0,
-    title: "Slide Title",
-    description: "Slide description",
-    button1_text: "Découvrir",
-    button1_link: "/products",
-    button2_text: "En savoir plus",
-    button2_link: "/about",
+    title: dbSlide.title || "",
+    description: dbSlide.description || "",
+    button1_text: dbSlide.button1_text || "",
+    button1_link: dbSlide.button1_link || "",
+    button2_text: dbSlide.button2_text || "",
+    button2_link: dbSlide.button2_link || "",
   };
 }
 
-// GET all slides
 export async function getHeroSlides(_req: any, res: any) {
   try {
-    const result = await pool.query(
-      `SELECT * FROM hero_slides
-       ORDER BY order_index ASC NULLS LAST, id ASC`,
-    );
+    const result = await pool.query(`
+      SELECT * FROM hero_slides
+      ORDER BY order_index ASC NULLS LAST, id ASC
+    `);
 
     res.json(result.rows.map(dbSlideToApi));
   } catch (error) {
@@ -43,10 +42,19 @@ export async function getHeroSlides(_req: any, res: any) {
   }
 }
 
-// CREATE slide
 export async function createHeroSlide(req: any, res: any) {
   try {
-    const { image, alt, order } = req.body;
+    const {
+      image,
+      alt,
+      order,
+      title,
+      description,
+      button1_text,
+      button1_link,
+      button2_text,
+      button2_link,
+    } = req.body;
 
     if (!image) {
       return res.status(400).json({ error: "Image URL is required" });
@@ -55,12 +63,12 @@ export async function createHeroSlide(req: any, res: any) {
     let orderIndex = order;
 
     if (orderIndex === undefined) {
-      const max = await pool.query(
-        `SELECT order_index
-         FROM hero_slides
-         ORDER BY order_index DESC NULLS LAST
-         LIMIT 1`,
-      );
+      const max = await pool.query(`
+        SELECT order_index
+        FROM hero_slides
+        ORDER BY order_index DESC NULLS LAST
+        LIMIT 1
+      `);
 
       orderIndex =
         max.rows.length > 0 ? (max.rows[0].order_index || 0) + 1 : 0;
@@ -69,11 +77,35 @@ export async function createHeroSlide(req: any, res: any) {
     const id = `slide_${Date.now()}`;
 
     const result = await pool.query(
-      `INSERT INTO hero_slides
-       (id, image, alt, order_index)
-       VALUES ($1, $2, $3, $4)
-       RETURNING *`,
-      [id, image, alt || "Hero slide", orderIndex],
+      `
+      INSERT INTO hero_slides
+      (
+        id,
+        image,
+        alt,
+        order_index,
+        title,
+        description,
+        button1_text,
+        button1_link,
+        button2_text,
+        button2_link
+      )
+      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
+      RETURNING *
+      `,
+      [
+        id,
+        image,
+        alt || "Hero slide",
+        orderIndex,
+        title || "",
+        description || "",
+        button1_text || "",
+        button1_link || "",
+        button2_text || "",
+        button2_link || "",
+      ],
     );
 
     res.status(201).json(dbSlideToApi(result.rows[0]));
@@ -83,11 +115,21 @@ export async function createHeroSlide(req: any, res: any) {
   }
 }
 
-// UPDATE slide
 export async function updateHeroSlide(req: any, res: any) {
   try {
     const { id } = req.params;
-    const { image, alt, order } = req.body;
+
+    const {
+      image,
+      alt,
+      order,
+      title,
+      description,
+      button1_text,
+      button1_link,
+      button2_text,
+      button2_link,
+    } = req.body;
 
     const existing = await pool.query(
       `SELECT id FROM hero_slides WHERE id = $1`,
@@ -117,6 +159,36 @@ export async function updateHeroSlide(req: any, res: any) {
       values.push(order);
     }
 
+    if (title !== undefined) {
+      fields.push(`title = $${i++}`);
+      values.push(title);
+    }
+
+    if (description !== undefined) {
+      fields.push(`description = $${i++}`);
+      values.push(description);
+    }
+
+    if (button1_text !== undefined) {
+      fields.push(`button1_text = $${i++}`);
+      values.push(button1_text);
+    }
+
+    if (button1_link !== undefined) {
+      fields.push(`button1_link = $${i++}`);
+      values.push(button1_link);
+    }
+
+    if (button2_text !== undefined) {
+      fields.push(`button2_text = $${i++}`);
+      values.push(button2_text);
+    }
+
+    if (button2_link !== undefined) {
+      fields.push(`button2_link = $${i++}`);
+      values.push(button2_link);
+    }
+
     if (fields.length === 0) {
       return res.json({ message: "Nothing to update" });
     }
@@ -124,10 +196,12 @@ export async function updateHeroSlide(req: any, res: any) {
     values.push(id);
 
     const result = await pool.query(
-      `UPDATE hero_slides
-       SET ${fields.join(", ")}
-       WHERE id = $${i}
-       RETURNING *`,
+      `
+      UPDATE hero_slides
+      SET ${fields.join(", ")}
+      WHERE id = $${i}
+      RETURNING *
+      `,
       values,
     );
 
@@ -138,15 +212,16 @@ export async function updateHeroSlide(req: any, res: any) {
   }
 }
 
-// DELETE slide
 export async function deleteHeroSlide(req: any, res: any) {
   try {
     const { id } = req.params;
 
     const result = await pool.query(
-      `DELETE FROM hero_slides
-       WHERE id = $1
-       RETURNING *`,
+      `
+      DELETE FROM hero_slides
+      WHERE id = $1
+      RETURNING *
+      `,
       [id],
     );
 

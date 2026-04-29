@@ -89,45 +89,54 @@ export default function HeroSlidesManager() {
   };
 
   const handleSaveSlide = async () => {
-    if (!editData.image) {
-      toast.error("L'URL de l'image est requise");
-      return;
+  if (!editData.image) {
+    toast.error("L'URL de l'image est requise");
+    return;
+  }
+
+  try {
+    const isEditing = editingId && editingId !== "new";
+    const method = isEditing ? "PUT" : "POST";
+    const url = isEditing ? `/api/slides/${editingId}` : "/api/slides";
+
+    const response = await fetch(url, {
+      method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        image: editData.image,
+        alt: editData.alt || "Hero slide",
+        order: editData.order,
+
+        title: editData.title || "",
+        description: editData.description || "",
+
+        button1_text: editData.button1_text || "",
+        button1_link: editData.button1_link || "",
+
+        button2_text: editData.button2_text || "",
+        button2_link: editData.button2_link || "",
+      }),
+    });
+
+    if (response.ok) {
+      await fetchSlides();
+      setEditingId(null);
+      setEditData({});
+      toast.success(
+        isEditing ? "Diapositive mise à jour" : "Diapositive créée",
+      );
+    } else {
+      const errorData = await response.json();
+      toast.error(
+        errorData.error ||
+          "Erreur lors de l'enregistrement de la diapositive",
+      );
     }
-
-    try {
-      const isEditing = editingId && editingId !== "new";
-      const method = isEditing ? "PUT" : "POST";
-      const url = isEditing ? `/api/slides/${editingId}` : "/api/slides";
-
-      const response = await fetch(url, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          image: editData.image,
-          alt: editData.alt || "Hero slide",
-          order: editData.order,
-        }),
-      });
-
-      if (response.ok) {
-        await fetchSlides();
-        setEditingId(null);
-        setEditData({});
-        toast.success(
-          isEditing ? "Diapositive mise à jour" : "Diapositive créée",
-        );
-      } else {
-        const errorData = await response.json();
-        toast.error(
-          errorData.error ||
-            "Erreur lors de l'enregistrement de la diapositive",
-        );
-      }
-    } catch (error) {
-      console.error("Error saving slide:", error);
-      toast.error("Erreur lors de l'enregistrement de la diapositive");
-    }
-  };
+  } catch (error) {
+    console.error("Error saving slide:", error);
+    toast.error("Erreur lors de l'enregistrement de la diapositive");
+  }
+};
 
   const handleDeleteSlide = async (id: string) => {
     if (!window.confirm("Supprimer cette diapositive ?")) return;
@@ -171,8 +180,14 @@ export default function HeroSlidesManager() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             image: newSlides[index].image,
-            alt: newSlides[index].alt,
+            alt: newSlides[index].alt || "Hero slide",
             order: newSlides[index].order,
+            title: newSlides[index].title,
+            description: newSlides[index].description,
+            button1_text: newSlides[index].button1_text,
+            button1_link: newSlides[index].button1_link,
+            button2_text: newSlides[index].button2_text,
+            button2_link: newSlides[index].button2_link,
           }),
         }),
         fetch(`/api/slides/${newSlides[swapIndex].id}`, {
@@ -180,8 +195,14 @@ export default function HeroSlidesManager() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             image: newSlides[swapIndex].image,
-            alt: newSlides[swapIndex].alt,
+            alt: newSlides[swapIndex].alt || "Hero slide",
             order: newSlides[swapIndex].order,
+            title: newSlides[swapIndex].title,
+            description: newSlides[swapIndex].description,
+            button1_text: newSlides[swapIndex].button1_text,
+            button1_link: newSlides[swapIndex].button1_link,
+            button2_text: newSlides[swapIndex].button2_text,
+            button2_link: newSlides[swapIndex].button2_link,
           }),
         }),
       ]);

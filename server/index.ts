@@ -56,6 +56,8 @@ import {
   deleteProductDetail,
 } from "./routes/product-details.js";
 
+import subscribersRouter from "./routes/subscribers.js";
+
 export function createServer() {
   const envValidation = validateEnv();
   logValidationResults(envValidation);
@@ -101,6 +103,9 @@ export function createServer() {
   app.post("/api/collections", createCollection);
   app.put("/api/collections/:id", updateCollection);
   app.delete("/api/collections/:id", deleteCollection);
+
+  // Subscribers routes
+  app.use("/api", subscribersRouter);
 
   // Contact routes
   app.post("/api/contact", handleContact);
