@@ -38,7 +38,7 @@ router.post("/newsletter", async (req, res) => {
 router.get("/subscribers", async (_req, res) => {
   try {
     const result = await pool.query(
-      `SELECT * FROM newsletter_subscribers ORDER BY subscribed_at DESC NULLS LAST, id DESC`,
+      `SELECT * FROM newsletter_subscribers ORDER BY created_at DESC NULLS LAST, id DESC`,
     );
     res.json(result.rows);
   } catch (error) {

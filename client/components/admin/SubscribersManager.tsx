@@ -7,7 +7,7 @@ import { toast } from "sonner";
 interface Subscriber {
   id: string;
   email: string;
-  subscribed_at: string;
+  created_at: string;
 }
 
 export default function SubscribersManager() {
@@ -23,7 +23,7 @@ export default function SubscribersManager() {
     try {
       const res = await fetch("/api/subscribers");
       const data = await res.json();
-      setSubscribers(data);
+      setSubscribers(Array.isArray(data) ? data : []);
     } catch (e) {
       console.error(e);
     } finally {
@@ -47,7 +47,7 @@ export default function SubscribersManager() {
       ["Email", "Date d'inscription"],
       ...subscribers.map((s) => [
         s.email,
-        new Date(s.subscribed_at).toLocaleDateString("fr-FR"),
+        new Date(s.created_at).toLocaleDateString("fr-FR"),
       ]),
     ];
     const csv = rows.map((r) => r.join(",")).join("\n");
@@ -98,7 +98,7 @@ export default function SubscribersManager() {
           {
             label: "Ce mois",
             value: subscribers.filter((s) => {
-              const d = new Date(s.subscribed_at);
+              const d = new Date(s.created_at);
               const now = new Date();
               return (
                 d.getMonth() === now.getMonth() &&
@@ -110,7 +110,7 @@ export default function SubscribersManager() {
           {
             label: "Cette semaine",
             value: subscribers.filter((s) => {
-              const d = new Date(s.subscribed_at);
+              const d = new Date(s.created_at);
               const weekAgo = new Date();
               weekAgo.setDate(weekAgo.getDate() - 7);
               return d >= weekAgo;
@@ -181,7 +181,7 @@ export default function SubscribersManager() {
                       {sub.email}
                     </td>
                     <td className="py-3 px-4 text-muted-foreground font-roboto">
-                      {new Date(sub.subscribed_at).toLocaleDateString("fr-FR", {
+                      {new Date(sub.created_at).toLocaleDateString("fr-FR", {
                         day: "2-digit",
                         month: "long",
                         year: "numeric",
