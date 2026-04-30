@@ -4,7 +4,7 @@ import cors from "cors";
 import path from "path";
 import { validateEnv, logValidationResults } from "./lib/env-validator.js";
 import { handleDemo } from "./routes/demo.js";
-import { trackVisitor, getVisitorStats } from "./routes/analytics.js";
+import { trackVisitor, getVisitorStats, getVisitorTrend } from "./routes/analytics.js";
 import { uploadFile } from "./routes/upload.js";
 import {
   getProducts,
@@ -92,6 +92,7 @@ export function createServer() {
   // Analytics routes
   app.post("/api/analytics/track-visitor", trackVisitor);
   app.get("/api/analytics/visitors", getVisitorStats);
+  app.get("/api/analytics/trend", getVisitorTrend);
 
   app.post("/api/upload", uploadFile);
 

@@ -29,6 +29,53 @@ export async function trackVisitor(req: any, res: any) {
   }
 }
 
+export async function getVisitorTrend(_req: any, res: any) {
+  try {
+    const result = await pool.query(`
+      SELECT
+        DATE(visited_at AT TIME ZONE 'UTC') AS date,
+        COUNT(DISTINCT ip_address) AS visitors
+      FROM visitors
+      WHERE visited_at >= NOW() - INTERVAL '30 days'
+      GROUP BY DATE(visited_at AT TIME ZONE 'UTC')
+      ORDER BY date ASC
+    `);
+
+    const trend = [];
+    for (let i = 29; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      d.setHours(0, 0, 0, 0);
+      const dateStr = d.toISOString().split("T")[0];
+      const row = result.rows.find(
+        (r) => new Date(r.date).toISOString().split("T")[0] === dateStr,
+      );
+      trend.push({
+        date: dateStr,
+        label: d.toLocaleDateString("fr-FR", { day: "2-digit", month: "short" }),
+        visitors: row ? parseInt(row.visitors) : 0,
+      });
+    }
+
+    res.json(trend);
+  } catch (error: any) {
+    if (error.code === "42P01") {
+      const trend = Array.from({ length: 30 }, (_, i) => {
+        const d = new Date();
+        d.setDate(d.getDate() - (29 - i));
+        return {
+          date: d.toISOString().split("T")[0],
+          label: d.toLocaleDateString("fr-FR", { day: "2-digit", month: "short" }),
+          visitors: 0,
+        };
+      });
+      return res.json(trend);
+    }
+    console.error("Error fetching visitor trend:", error);
+    res.status(500).json({ error: "Failed to fetch visitor trend" });
+  }
+}
+
 export async function getVisitorStats(_req: any, res: any) {
   try {
     const thirtyDaysAgo = new Date();
