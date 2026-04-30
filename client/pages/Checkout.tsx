@@ -3,7 +3,7 @@ import { useCart } from "@/contexts/CartContext";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ArrowLeft, Phone } from "lucide-react";
 import { toast } from "sonner";
-
+import { Link } from 'react-router-dom';
 interface CheckoutFormData {
   name: string;
   email: string;
@@ -19,6 +19,8 @@ export default function Checkout() {
   const navigate = useNavigate();
   const location = useLocation();
   const { message } = location.state || {};  // Receive message from cart
+
+  console.log(message);  // This should log the message from the Cart page
 
   const [isLoading, setIsLoading] = useState(false);
   const [panierCode, setPanierCode] = useState<string | null>(null);
@@ -277,7 +279,7 @@ export default function Checkout() {
 
   return (
     <div className="min-h-screen bg-background py-16 md:py-24">
-      {/* Checkout form content here */}
+      {/* Checkout form content here */} Checkout Page
     </div>
   );
 }

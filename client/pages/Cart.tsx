@@ -12,6 +12,7 @@ export default function Cart() {
   });
 
   const handleCheckout = () => {
+      console.log(formData.message);  // Check if this is set correctly
     navigate("/checkout", {
       state: {
         message: formData.message,  // Passing message to checkout
