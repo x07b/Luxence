@@ -1,4 +1,3 @@
-import { randomUUID } from "node:crypto";
 import { pool } from "../lib/db.js";
 
 export interface DetailSection {
@@ -67,7 +66,6 @@ export async function upsertProductDetails(req: any, res: any) {
     const sectionsToInsert = sections
       .filter((s: any) => s.title && s.content)
       .map((s: any, index: number) => ({
-        id: s.id || randomUUID(),
         product_id: productId,
         title: s.title,
         content: s.content,
@@ -78,10 +76,9 @@ export async function upsertProductDetails(req: any, res: any) {
       for (const section of sectionsToInsert) {
         await client.query(
           `INSERT INTO product_details_sections
-           (id, product_id, title, content, order_index)
-           VALUES ($1, $2, $3, $4, $5)`,
+           (product_id, title, content, order_index)
+           VALUES ($1, $2, $3, $4)`,
           [
-            section.id,
             section.product_id,
             section.title,
             section.content,
