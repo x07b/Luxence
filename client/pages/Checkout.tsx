@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useCart } from "@/contexts/CartContext";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { ArrowLeft, Phone } from "lucide-react";
 import { toast } from "sonner";
 import { Link } from 'react-router-dom';
@@ -16,7 +16,6 @@ interface CheckoutFormData {
 
 export default function Checkout() {
   const { items, total, clearCart } = useCart();
-  const navigate = useNavigate();
   const location = useLocation();
   const { message } = location.state || {};  // Receive message from cart
 
@@ -279,7 +278,203 @@ export default function Checkout() {
 
   return (
     <div className="min-h-screen bg-background py-16 md:py-24">
-      {/* Checkout form content here */}
+      <div className="container mx-auto px-4">
+        <div className="max-w-6xl mx-auto">
+          {/* Header */}
+          <div className="mb-8">
+            <Link
+              to="/cart"
+              className="inline-flex items-center gap-2 text-foreground hover:text-accent transition-colors mb-6"
+            >
+              <ArrowLeft className="w-5 h-5" />
+              Retour au panier
+            </Link>
+            <h1 className="text-4xl md:text-5xl font-futura font-bold text-primary">
+              Finaliser le devis
+            </h1>
+          </div>
+
+          <div className="grid lg:grid-cols-3 gap-8">
+            {/* Form */}
+            <form onSubmit={handleSubmit} className="lg:col-span-2 space-y-6">
+              <div className="bg-white rounded-lg border border-border p-8 space-y-6">
+                <h2 className="text-2xl font-futura font-bold text-primary">
+                  Vos informations
+                </h2>
+
+                {/* Name */}
+                <div>
+                  <label className="block text-sm font-semibold font-roboto text-foreground mb-2">
+                    Nom complet *
+                  </label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    placeholder="Votre nom et prénom"
+                    className={`w-full px-4 py-3 rounded-lg border-2 font-roboto focus:outline-none focus:ring-2 focus:ring-accent/20 transition-colors ${
+                      errors.name ? "border-red-500" : "border-border focus:border-accent"
+                    }`}
+                  />
+                  {errors.name && (
+                    <p className="mt-1 text-sm text-red-500 font-roboto">{errors.name}</p>
+                  )}
+                </div>
+
+                {/* Email */}
+                <div>
+                  <label className="block text-sm font-semibold font-roboto text-foreground mb-2">
+                    Email *
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    placeholder="votre@email.com"
+                    className={`w-full px-4 py-3 rounded-lg border-2 font-roboto focus:outline-none focus:ring-2 focus:ring-accent/20 transition-colors ${
+                      errors.email ? "border-red-500" : "border-border focus:border-accent"
+                    }`}
+                  />
+                  {errors.email && (
+                    <p className="mt-1 text-sm text-red-500 font-roboto">{errors.email}</p>
+                  )}
+                </div>
+
+                {/* Phone */}
+                <div>
+                  <label className="block text-sm font-semibold font-roboto text-foreground mb-2">
+                    Téléphone *
+                  </label>
+                  <input
+                    type="tel"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    placeholder="+33 6 00 00 00 00"
+                    className={`w-full px-4 py-3 rounded-lg border-2 font-roboto focus:outline-none focus:ring-2 focus:ring-accent/20 transition-colors ${
+                      errors.phone ? "border-red-500" : "border-border focus:border-accent"
+                    }`}
+                  />
+                  {errors.phone && (
+                    <p className="mt-1 text-sm text-red-500 font-roboto">{errors.phone}</p>
+                  )}
+                </div>
+
+                {/* Address */}
+                <div>
+                  <label className="block text-sm font-semibold font-roboto text-foreground mb-2">
+                    Adresse *
+                  </label>
+                  <input
+                    type="text"
+                    name="address"
+                    value={formData.address}
+                    onChange={handleChange}
+                    placeholder="Numéro et nom de rue"
+                    className={`w-full px-4 py-3 rounded-lg border-2 font-roboto focus:outline-none focus:ring-2 focus:ring-accent/20 transition-colors ${
+                      errors.address ? "border-red-500" : "border-border focus:border-accent"
+                    }`}
+                  />
+                  {errors.address && (
+                    <p className="mt-1 text-sm text-red-500 font-roboto">{errors.address}</p>
+                  )}
+                </div>
+
+                {/* City + Postal Code */}
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-semibold font-roboto text-foreground mb-2">
+                      Ville *
+                    </label>
+                    <input
+                      type="text"
+                      name="city"
+                      value={formData.city}
+                      onChange={handleChange}
+                      placeholder="Paris"
+                      className={`w-full px-4 py-3 rounded-lg border-2 font-roboto focus:outline-none focus:ring-2 focus:ring-accent/20 transition-colors ${
+                        errors.city ? "border-red-500" : "border-border focus:border-accent"
+                      }`}
+                    />
+                    {errors.city && (
+                      <p className="mt-1 text-sm text-red-500 font-roboto">{errors.city}</p>
+                    )}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold font-roboto text-foreground mb-2">
+                      Code postal *
+                    </label>
+                    <input
+                      type="text"
+                      name="postalCode"
+                      value={formData.postalCode}
+                      onChange={handleChange}
+                      placeholder="75001"
+                      className={`w-full px-4 py-3 rounded-lg border-2 font-roboto focus:outline-none focus:ring-2 focus:ring-accent/20 transition-colors ${
+                        errors.postalCode ? "border-red-500" : "border-border focus:border-accent"
+                      }`}
+                    />
+                    {errors.postalCode && (
+                      <p className="mt-1 text-sm text-red-500 font-roboto">{errors.postalCode}</p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Message */}
+                <div>
+                  <label className="block text-sm font-semibold font-roboto text-foreground mb-2">
+                    Message (optionnel)
+                  </label>
+                  <textarea
+                    name="message"
+                    value={formData.message}
+                    onChange={(e) =>
+                      setFormData((prev) => ({ ...prev, message: e.target.value }))
+                    }
+                    placeholder="Précisions sur votre demande de devis..."
+                    rows={4}
+                    className="w-full px-4 py-3 rounded-lg border-2 border-border font-roboto focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20 resize-none transition-colors"
+                  />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full flex items-center justify-center bg-accent hover:bg-accent/90 disabled:opacity-60 disabled:cursor-not-allowed text-white px-6 py-4 rounded-lg font-futura font-bold text-lg transition-all duration-300 active:scale-95"
+              >
+                {isLoading ? "Envoi en cours..." : "Envoyer la demande de devis"}
+              </button>
+            </form>
+
+            {/* Order Summary */}
+            <div className="lg:col-span-1 h-fit">
+              <div className="bg-white rounded-lg border border-border p-8 sticky top-4 space-y-4">
+                <h2 className="text-2xl font-futura font-bold text-primary">
+                  Récapitulatif
+                </h2>
+                <div className="space-y-3">
+                  {items.map((item) => (
+                    <div key={item.id} className="flex justify-between items-start gap-2">
+                      <span className="font-roboto text-foreground flex-1">{item.name}</span>
+                      <span className="font-roboto text-muted-foreground whitespace-nowrap">
+                        ×{item.quantity}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+                <div className="border-t border-border pt-4">
+                  <p className="text-sm text-muted-foreground font-roboto">
+                    {items.length} article{items.length > 1 ? "s" : ""} · Prix sur devis
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
