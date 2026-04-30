@@ -65,8 +65,8 @@ export default function ProductsManager() {
 
   const handleSave = async (productData: any) => {
     try {
-      // Extract detail sections from productData
-      const { detailSections, ...productPayload } = productData;
+      // Extract detail sections and recommendations from productData
+      const { detailSections, recommendedProductIds, ...productPayload } = productData;
 
       // Save product
       const response = await fetch(
@@ -88,6 +88,15 @@ export default function ProductsManager() {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ sections: detailSections }),
+          });
+        }
+
+        // Save recommendations if provided
+        if (recommendedProductIds && recommendedProductIds.length >= 0) {
+          await fetch(`/api/products/${productId}/recommendations`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ recommendations: recommendedProductIds }),
           });
         }
 
@@ -134,6 +143,7 @@ export default function ProductsManager() {
               product={
                 editingId ? products.find((p) => p.id === editingId) : undefined
               }
+              allProducts={products}
               onSave={handleSave}
               onCancel={() => {
                 setIsAddingNew(false);

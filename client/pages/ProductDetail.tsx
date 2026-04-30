@@ -383,10 +383,7 @@ export default function ProductDetail() {
         )}
 
         {/* Recommended Products Section */}
-        <RecommendedProductsSection
-          currentProduct={product}
-          category={product.category}
-        />
+        <RecommendedProductsSection productId={product.id} />
 
         {/* CTA Section */}
         <section className="bg-gradient-to-r from-accent to-accent/80 rounded-lg p-8 sm:p-12 text-center text-white space-y-6">
