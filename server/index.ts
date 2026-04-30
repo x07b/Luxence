@@ -55,10 +55,7 @@ import {
   upsertProductDetails,
   deleteProductDetail,
 } from "./routes/product-details.js";
-import {
-  getProductRecommendations,
-  upsertProductRecommendations,
-} from "./routes/product-recommendations.js";
+import productRecommendationsRouter from "./routes/product-recommendations.js";
 
 import subscribersRouter from "./routes/subscribers.js";
 
@@ -149,8 +146,7 @@ export function createServer() {
   );
 
   // Product recommendations routes
-  app.get("/api/products/:productId/recommendations", getProductRecommendations);
-  app.put("/api/products/:productId/recommendations", upsertProductRecommendations);
+  app.use("/api/products", productRecommendationsRouter);
 
   app.use(express.static(path.join(process.cwd(), "public")));
 
