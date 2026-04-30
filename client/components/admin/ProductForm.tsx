@@ -25,12 +25,14 @@ interface ProductFormProps {
   product?: any;
   onSave: (data: any) => void;
   onCancel: () => void;
+  allProducts?: any[];
 }
 
 export default function ProductForm({
   product,
   onSave,
   onCancel,
+  allProducts = [],
 }: ProductFormProps) {
   const [collections, setCollections] = useState<Collection[]>([]);
   const [isUploading, setIsUploading] = useState(false);
@@ -39,6 +41,8 @@ export default function ProductForm({
   }>({});
   const [detailSections, setDetailSections] = useState<DetailSection[]>([]);
   const [isLoadingDetails, setIsLoadingDetails] = useState(false);
+  const [recommendedProductIds, setRecommendedProductIds] = useState<string[]>([]);
+  const [isLoadingRecommendations, setIsLoadingRecommendations] = useState(false);
 
   const [formData, setFormData] = useState({
     name: product?.name || "",
@@ -65,7 +69,7 @@ export default function ProductForm({
     fetchCollections();
   }, []);
 
-  // Fetch product details sections when editing
+  // Fetch product details sections and recommendations when editing
   useEffect(() => {
     if (product?.id) {
       const fetchDetails = async () => {
@@ -83,7 +87,23 @@ export default function ProductForm({
         }
       };
 
+      const fetchRecommendations = async () => {
+        try {
+          setIsLoadingRecommendations(true);
+          const response = await fetch(`/api/products/${product.id}/recommendations`);
+          if (response.ok) {
+            const data = await response.json();
+            setRecommendedProductIds(data.map((p: any) => p.id));
+          }
+        } catch (error) {
+          console.error("Error fetching product recommendations:", error);
+        } finally {
+          setIsLoadingRecommendations(false);
+        }
+      };
+
       fetchDetails();
+      fetchRecommendations();
     }
   }, [product?.id]);
 
@@ -261,6 +281,17 @@ export default function ProductForm({
     );
   };
 
+  const toggleRecommendedProduct = (productId: string) => {
+    setRecommendedProductIds((prev) => {
+      if (prev.includes(productId)) {
+        return prev.filter((id) => id !== productId);
+      } else if (prev.length < 3) {
+        return [...prev, productId];
+      }
+      return prev;
+    });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -275,6 +306,7 @@ export default function ProductForm({
       images: filteredImages,
       specifications: filteredSpecs,
       detailSections,
+      recommendedProductIds,
     });
   };
 
@@ -584,6 +616,51 @@ export default function ProductForm({
             ))}
           </div>
         )}
+      </div>
+
+      {/* Recommended Products */}
+      <div className="border-t border-border pt-6">
+        <label className="block text-sm font-medium mb-4">
+          Produits recommandés (max 3)
+        </label>
+        <p className="text-xs text-muted-foreground mb-4">
+          Sélectionnez jusqu'à 3 produits existants à recommander avec ce produit.
+          Si aucun produit n'est sélectionné, la section sera masquée sur la page produit.
+        </p>
+
+        {isLoadingRecommendations ? (
+          <p className="text-sm text-muted-foreground">Loading recommendations...</p>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 max-h-96 overflow-y-auto p-3 border border-border rounded-lg bg-muted/20">
+            {allProducts.filter((p) => p.id !== product?.id).map((p) => (
+              <label
+                key={p.id}
+                className="flex items-center gap-3 p-3 border border-border rounded-lg hover:bg-white transition-colors cursor-pointer"
+              >
+                <input
+                  type="checkbox"
+                  checked={recommendedProductIds.includes(p.id)}
+                  onChange={() => toggleRecommendedProduct(p.id)}
+                  disabled={
+                    !recommendedProductIds.includes(p.id) &&
+                    recommendedProductIds.length >= 3
+                  }
+                  className="w-4 h-4 cursor-pointer"
+                />
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium truncate">{p.name}</p>
+                  <p className="text-xs text-muted-foreground truncate">
+                    {p.category}
+                  </p>
+                </div>
+              </label>
+            ))}
+          </div>
+        )}
+
+        <div className="mt-3 text-xs text-muted-foreground">
+          {recommendedProductIds.length} / 3 produits sélectionnés
+        </div>
       </div>
 
       {/* Form Actions */}

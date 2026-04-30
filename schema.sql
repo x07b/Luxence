@@ -189,6 +189,24 @@ CREATE INDEX IF NOT EXISTS idx_product_details_sections_product_id ON product_de
 CREATE INDEX IF NOT EXISTS idx_product_details_sections_order ON product_details_sections(product_id, order_index);
 
 -- ============================================
+-- 11. PRODUCT RECOMMENDATIONS TABLE
+-- ============================================
+CREATE TABLE IF NOT EXISTS product_recommendations (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  product_id TEXT NOT NULL REFERENCES products(id) ON DELETE CASCADE,
+  recommended_product_id TEXT NOT NULL REFERENCES products(id) ON DELETE CASCADE,
+  order_index INTEGER NOT NULL DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW(),
+  CONSTRAINT no_self_recommendation CHECK (product_id != recommended_product_id),
+  CONSTRAINT unique_recommendation UNIQUE (product_id, recommended_product_id)
+);
+
+-- Create indexes
+CREATE INDEX IF NOT EXISTS idx_product_recommendations_product_id ON product_recommendations(product_id);
+CREATE INDEX IF NOT EXISTS idx_product_recommendations_order ON product_recommendations(product_id, order_index);
+
+-- ============================================
 -- TRIGGERS: Auto-update updated_at timestamps
 -- ============================================
 
@@ -245,6 +263,12 @@ CREATE TRIGGER update_product_details_sections_updated_at
   FOR EACH ROW
   EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_product_recommendations_updated_at ON product_recommendations;
+CREATE TRIGGER update_product_recommendations_updated_at
+  BEFORE UPDATE ON product_recommendations
+  FOR EACH ROW
+  EXECUTE FUNCTION update_updated_at_column();
+
 -- ============================================
 -- ROW LEVEL SECURITY (RLS) POLICIES
 -- ============================================
@@ -259,6 +283,7 @@ ALTER TABLE contact_messages ENABLE ROW LEVEL SECURITY;
 ALTER TABLE quote_requests ENABLE ROW LEVEL SECURITY;
 ALTER TABLE hero_slides ENABLE ROW LEVEL SECURITY;
 ALTER TABLE product_details_sections ENABLE ROW LEVEL SECURITY;
+ALTER TABLE product_recommendations ENABLE ROW LEVEL SECURITY;
 
 -- Public read access for collections (products are public)
 -- Drop existing policies if they exist, then create new ones
@@ -290,6 +315,11 @@ CREATE POLICY "Hero slides are viewable by everyone"
 DROP POLICY IF EXISTS "Product details sections are viewable by everyone" ON product_details_sections;
 CREATE POLICY "Product details sections are viewable by everyone"
   ON product_details_sections FOR SELECT
+  USING (true);
+
+DROP POLICY IF EXISTS "Product recommendations are viewable by everyone" ON product_recommendations;
+CREATE POLICY "Product recommendations are viewable by everyone"
+  ON product_recommendations FOR SELECT
   USING (true);
 
 -- Insert/Update/Delete policies - you may want to restrict these based on your auth setup
