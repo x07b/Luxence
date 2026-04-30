@@ -199,7 +199,7 @@ export default function Admin() {
           />
           <NavItem
             icon={<Image className="w-5 h-5" />}
-            label="Hero Slides"
+            label="Diapositives Hero"
             href="#hero-slides"
             isOpen={isSidebarOpen}
           />
@@ -227,7 +227,7 @@ export default function Admin() {
           <div className="px-6 py-4 flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-futura font-bold text-foreground">
-                Admin Panel
+                Panneau d'administration
               </h1>
               <p className="text-sm text-muted-foreground mt-1">
                 Gérez vos produits, commandes et collections
