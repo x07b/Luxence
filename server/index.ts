@@ -14,6 +14,7 @@ import {
   deleteProduct,
   addProductImage,
   removeProductImage,
+  bulkImportProducts,
 } from "./routes/products.js";
 import {
   getCollections,
@@ -97,6 +98,7 @@ export function createServer() {
   // Products routes
   app.get("/api/products", getProducts);
   app.get("/api/products/:id", getProductById);
+  app.post("/api/products/bulk-import", bulkImportProducts);
   app.post("/api/products", createProduct);
   app.put("/api/products/:id", updateProduct);
   app.delete("/api/products/:id", deleteProduct);

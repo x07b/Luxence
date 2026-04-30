@@ -487,6 +487,84 @@ export async function updateProduct(req: any, res: any) {
   }
 }
 
+export async function bulkImportProducts(req: any, res: any) {
+  const { products: rows } = req.body;
+
+  if (!Array.isArray(rows) || rows.length === 0) {
+    return res.status(400).json({ error: "No products provided" });
+  }
+
+  const results = { created: 0, failed: 0, errors: [] as string[] };
+
+  for (const row of rows) {
+    const client = await pool.connect();
+    try {
+      const { name, description, price, category, images, specifications } = row;
+
+      if (!name?.trim() || !description?.trim()) {
+        results.failed++;
+        results.errors.push(`"${name || "sans nom"}": name et description requis`);
+        client.release();
+        continue;
+      }
+
+      const id = `product-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+      const slug = generateSlug(name);
+
+      await client.query("BEGIN");
+
+      await client.query(
+        `INSERT INTO products (id, name, description, price, category, slug)
+         VALUES ($1, $2, $3, $4, $5, $6)`,
+        [
+          id,
+          name.trim(),
+          description.trim(),
+          Number(price) || 0,
+          (category || "Uncategorized").trim(),
+          slug,
+        ],
+      );
+
+      if (Array.isArray(images)) {
+        for (let i = 0; i < images.length; i++) {
+          if (images[i]?.trim()) {
+            await client.query(
+              `INSERT INTO product_images (product_id, image_url, order_index)
+               VALUES ($1, $2, $3)`,
+              [id, images[i].trim(), i],
+            );
+          }
+        }
+      }
+
+      if (Array.isArray(specifications)) {
+        for (let i = 0; i < specifications.length; i++) {
+          const spec = specifications[i];
+          if (spec?.label?.trim() && spec?.value?.trim()) {
+            await client.query(
+              `INSERT INTO product_specifications (product_id, label, value, order_index)
+               VALUES ($1, $2, $3, $4)`,
+              [id, spec.label.trim(), spec.value.trim(), i],
+            );
+          }
+        }
+      }
+
+      await client.query("COMMIT");
+      results.created++;
+    } catch (err: any) {
+      await client.query("ROLLBACK");
+      results.failed++;
+      results.errors.push(`"${row.name}": ${err.message}`);
+    } finally {
+      client.release();
+    }
+  }
+
+  return res.json({ success: true, ...results });
+}
+
 export async function deleteProduct(req: any, res: any) {
   try {
     const { id } = req.params;
