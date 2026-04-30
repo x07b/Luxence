@@ -279,7 +279,7 @@ export default function Checkout() {
 
   return (
     <div className="min-h-screen bg-background py-16 md:py-24">
-      {/* Checkout form content here */} Checkout Page
+      {/* Checkout form content here */}
     </div>
   );
 }
