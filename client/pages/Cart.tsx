@@ -1,9 +1,21 @@
 import { useCart } from "@/contexts/CartContext";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Trash2, Plus, Minus } from "lucide-react";
 
 export default function Cart() {
   const { items, removeItem, updateQuantity, total, clearCart } = useCart();
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    message: "",
+  });
+
+  const handleCheckout = () => {
+    navigate("/checkout", {
+      state: {
+        message: formData.message,  // Passing message to checkout
+      },
+    });
+  };
 
   if (items.length === 0) {
     return (
@@ -129,18 +141,22 @@ export default function Cart() {
 
                 {/* Message Textarea */}
                 <textarea
-                  placeholder="Ajouter un message à votre demande de devis (optionnel)"
-                  className="w-full px-4 py-3 rounded-lg border-2 border-border font-roboto focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20 resize-none"
-                  rows={4}
-                />
+                    placeholder="Ajouter un message à votre demande de devis (optionnel)"
+                    value={formData.message}
+                    onChange={(e) =>
+                      setFormData((prev) => ({ ...prev, message: e.target.value }))
+                    }
+                    className="w-full px-4 py-3 rounded-lg border-2 border-border font-roboto focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20 resize-none"
+                    rows={4}
+                  />
 
                 {/* Checkout Button */}
-                <Link
-                  to="/checkout"
+                <button
+                  onClick={handleCheckout}  // Updated to call the checkout handler
                   className="w-full flex items-center justify-center bg-accent hover:bg-accent/90 text-white px-6 py-3 rounded-lg font-futura font-bold transition-all duration-300 active:scale-95"
                 >
                   Continuer vers le devis
-                </Link>
+                </button>
 
                 {/* Clear Cart Button */}
                 <button

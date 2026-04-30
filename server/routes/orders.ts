@@ -100,8 +100,8 @@ export async function createOrder(req: any, res: any) {
     await client.query(
       `INSERT INTO orders
        (id, panier_code, customer_name, customer_email, customer_phone,
-        customer_address, customer_city, customer_postal_code, status)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
+        customer_address, customer_city, customer_postal_code, status, message)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)`,
       [
         orderId,
         panierCode,
@@ -112,6 +112,7 @@ export async function createOrder(req: any, res: any) {
         data.customer.city,
         data.customer.postalCode,
         "en attente",
+        data.message,
       ],
     );
 

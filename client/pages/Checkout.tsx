@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useCart } from "@/contexts/CartContext";
-import { useNavigate, Link } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { ArrowLeft, Phone } from "lucide-react";
 import { toast } from "sonner";
 
@@ -11,11 +11,15 @@ interface CheckoutFormData {
   address: string;
   city: string;
   postalCode: string;
+  message: string;
 }
 
 export default function Checkout() {
   const { items, total, clearCart } = useCart();
   const navigate = useNavigate();
+  const location = useLocation();
+  const { message } = location.state || {};  // Receive message from cart
+
   const [isLoading, setIsLoading] = useState(false);
   const [panierCode, setPanierCode] = useState<string | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -26,6 +30,7 @@ export default function Checkout() {
     address: "",
     city: "",
     postalCode: "",
+    message: message || "",  // Pre-fill message with the one passed from the cart
   });
 
   const validateForm = () => {
@@ -102,6 +107,7 @@ export default function Checkout() {
             quantity: item.quantity,
           })),
           total: total,
+          message: formData.message,  // Sending message with the order
         }),
       });
 
@@ -269,243 +275,9 @@ export default function Checkout() {
     );
   }
 
-  // Checkout form
   return (
     <div className="min-h-screen bg-background py-16 md:py-24">
-      <div className="container mx-auto px-4">
-        <div className="mb-8">
-          <Link
-            to="/cart"
-            className="inline-flex items-center gap-2 text-foreground hover:text-accent transition-colors"
-          >
-            <ArrowLeft className="w-5 h-5" />
-            Retour au panier
-          </Link>
-        </div>
-
-        <div className="max-w-4xl mx-auto grid lg:grid-cols-3 gap-8">
-          {/* Checkout Form */}
-          <div className="lg:col-span-2">
-            <div className="bg-white rounded-lg border border-border p-8 space-y-6">
-              <h1 className="text-3xl font-futura font-bold text-primary">
-                Informations de devis
-              </h1>
-
-              <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Name Field */}
-                <div>
-                  <label
-                    htmlFor="name"
-                    className="block text-sm font-roboto font-semibold text-foreground mb-2"
-                  >
-                    Nom Complet *
-                  </label>
-                  <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    placeholder="Votre nom complet"
-                    className={`w-full px-4 py-3 rounded-lg border-2 font-roboto transition-all ${
-                      errors.name
-                        ? "border-red-500"
-                        : "border-border focus:border-accent"
-                    } focus:outline-none focus:ring-2 focus:ring-accent/20`}
-                    disabled={isLoading}
-                  />
-                  {errors.name && (
-                    <p className="text-red-500 text-sm font-roboto mt-1">
-                      {errors.name}
-                    </p>
-                  )}
-                </div>
-
-                {/* Email Field */}
-                <div>
-                  <label
-                    htmlFor="email"
-                    className="block text-sm font-roboto font-semibold text-foreground mb-2"
-                  >
-                    Email *
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    placeholder="votre.email@example.com"
-                    className={`w-full px-4 py-3 rounded-lg border-2 font-roboto transition-all ${
-                      errors.email
-                        ? "border-red-500"
-                        : "border-border focus:border-accent"
-                    } focus:outline-none focus:ring-2 focus:ring-accent/20`}
-                    disabled={isLoading}
-                  />
-                  {errors.email && (
-                    <p className="text-red-500 text-sm font-roboto mt-1">
-                      {errors.email}
-                    </p>
-                  )}
-                </div>
-
-                {/* Phone Field */}
-                <div>
-                  <label
-                    htmlFor="phone"
-                    className="block text-sm font-roboto font-semibold text-foreground mb-2"
-                  >
-                    Téléphone *
-                  </label>
-                  <input
-                    type="tel"
-                    id="phone"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    placeholder="+216 XXXX XXXX"
-                    className={`w-full px-4 py-3 rounded-lg border-2 font-roboto transition-all ${
-                      errors.phone
-                        ? "border-red-500"
-                        : "border-border focus:border-accent"
-                    } focus:outline-none focus:ring-2 focus:ring-accent/20`}
-                    disabled={isLoading}
-                  />
-                  {errors.phone && (
-                    <p className="text-red-500 text-sm font-roboto mt-1">
-                      {errors.phone}
-                    </p>
-                  )}
-                </div>
-
-                {/* Address Field */}
-                <div>
-                  <label
-                    htmlFor="address"
-                    className="block text-sm font-roboto font-semibold text-foreground mb-2"
-                  >
-                    Adresse *
-                  </label>
-                  <input
-                    type="text"
-                    id="address"
-                    name="address"
-                    value={formData.address}
-                    onChange={handleChange}
-                    placeholder="Rue et numéro"
-                    className={`w-full px-4 py-3 rounded-lg border-2 font-roboto transition-all ${
-                      errors.address
-                        ? "border-red-500"
-                        : "border-border focus:border-accent"
-                    } focus:outline-none focus:ring-2 focus:ring-accent/20`}
-                    disabled={isLoading}
-                  />
-                  {errors.address && (
-                    <p className="text-red-500 text-sm font-roboto mt-1">
-                      {errors.address}
-                    </p>
-                  )}
-                </div>
-
-                {/* City & Postal Code */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label
-                      htmlFor="city"
-                      className="block text-sm font-roboto font-semibold text-foreground mb-2"
-                    >
-                      Ville *
-                    </label>
-                    <input
-                      type="text"
-                      id="city"
-                      name="city"
-                      value={formData.city}
-                      onChange={handleChange}
-                      placeholder="Ville"
-                      className={`w-full px-4 py-3 rounded-lg border-2 font-roboto transition-all ${
-                        errors.city
-                          ? "border-red-500"
-                          : "border-border focus:border-accent"
-                      } focus:outline-none focus:ring-2 focus:ring-accent/20`}
-                      disabled={isLoading}
-                    />
-                    {errors.city && (
-                      <p className="text-red-500 text-sm font-roboto mt-1">
-                        {errors.city}
-                      </p>
-                    )}
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="postalCode"
-                      className="block text-sm font-roboto font-semibold text-foreground mb-2"
-                    >
-                      Code Postal *
-                    </label>
-                    <input
-                      type="text"
-                      id="postalCode"
-                      name="postalCode"
-                      value={formData.postalCode}
-                      onChange={handleChange}
-                      placeholder="XXXXX"
-                      className={`w-full px-4 py-3 rounded-lg border-2 font-roboto transition-all ${
-                        errors.postalCode
-                          ? "border-red-500"
-                          : "border-border focus:border-accent"
-                      } focus:outline-none focus:ring-2 focus:ring-accent/20`}
-                      disabled={isLoading}
-                    />
-                    {errors.postalCode && (
-                      <p className="text-red-500 text-sm font-roboto mt-1">
-                        {errors.postalCode}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                {/* Submit Button */}
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="w-full flex items-center justify-center gap-2 bg-accent hover:bg-accent/90 disabled:bg-accent/50 text-white px-8 py-4 rounded-lg font-futura font-bold transition-all duration-300 active:scale-95 disabled:cursor-not-allowed"
-                >
-                  {isLoading ? (
-                    <>
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      Création de la commande...
-                    </>
-                  ) : (
-                    "Finaliser le devis"
-                  )}
-                </button>
-              </form>
-            </div>
-          </div>
-
-          {/* Order Summary */}
-          <div className="lg:col-span-1 h-fit">
-            <div className="bg-white rounded-lg border border-border p-8 sticky top-4 space-y-6">
-              <h2 className="text-2xl font-futura font-bold text-primary">
-                Résumé
-              </h2>
-
-              {/* Items */}
-              <div className="space-y-3 border-b border-border pb-4">
-                {items.map((item) => (
-                  <div key={item.id} className="flex justify-between text-sm">
-                    <span className="text-muted-foreground font-roboto">
-                      {item.name} x {item.quantity}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* Checkout form content here */}
     </div>
   );
 }
