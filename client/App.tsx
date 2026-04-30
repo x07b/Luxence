@@ -3,6 +3,7 @@ import "./global.css";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { CartProvider } from "./contexts/CartContext";
+import { useVisitorTracking } from "./hooks/use-visitor-tracking";
 import { Header } from "./components/Header";
 import { Footer } from "./components/Footer";
 import Index from "./pages/Index";
@@ -29,6 +30,7 @@ const RedirectProduct = () => {
 };
 
 const AppRoutes = () => {
+  useVisitorTracking();
   return (
     <Routes>
       <Route
