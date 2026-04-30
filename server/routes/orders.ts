@@ -24,6 +24,7 @@ const orderItemSchema = z.object({
 const createOrderSchema = z.object({
   customer: customerSchema,
   items: z.array(orderItemSchema).min(1),
+  message: z.string().optional(),
 });
 
 export interface Order {
@@ -32,6 +33,7 @@ export interface Order {
   customer: z.infer<typeof customerSchema>;
   items: z.infer<typeof orderItemSchema>[];
   total: number | null;
+  message: string | null;
   status: "en attente" | "en cours" | "livré" | "annulé";
   createdAt: Date;
   updatedAt: Date;
@@ -71,6 +73,7 @@ async function dbOrderToApi(dbOrder: any): Promise<Order> {
       dbOrder.total !== null && dbOrder.total !== undefined
         ? parseFloat(dbOrder.total)
         : null,
+    message: dbOrder.message ?? null,
     status: dbOrder.status,
     createdAt: new Date(dbOrder.created_at),
     updatedAt: new Date(dbOrder.updated_at),
