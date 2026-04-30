@@ -2,6 +2,7 @@ import { useCart } from "@/contexts/CartContext";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Trash2, Plus, Minus } from "lucide-react";
 import { useState } from "react";  // Import useState
+import { Link } from 'react-router-dom';
 
 export default function Cart() {
   const { items, removeItem, updateQuantity, total, clearCart } = useCart();
