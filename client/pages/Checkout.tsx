@@ -288,7 +288,7 @@ export default function Checkout() {
           <div className="lg:col-span-2">
             <div className="bg-white rounded-lg border border-border p-8 space-y-6">
               <h1 className="text-3xl font-futura font-bold text-primary">
-                Informations de livraison
+                Informations de devis
               </h1>
 
               <form onSubmit={handleSubmit} className="space-y-6">
@@ -478,7 +478,7 @@ export default function Checkout() {
                       Création de la commande...
                     </>
                   ) : (
-                    "Finaliser la commande"
+                    "Finaliser le devis"
                   )}
                 </button>
               </form>

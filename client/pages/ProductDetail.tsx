@@ -4,6 +4,7 @@ import { ArrowLeft } from "lucide-react";
 import { ProductGallery } from "@/components/product/ProductGallery";
 import { ProductHeroPanel } from "@/components/product/ProductHeroPanel";
 import { ProductDetailsPanel } from "@/components/product/ProductDetailsPanel";
+import { RecommendedProductsSection } from "@/components/product/RecommendedProductsSection";
 import { ScrollToTop } from "@/components/ScrollToTop";
 
 interface Specification {
@@ -380,6 +381,12 @@ export default function ProductDetail() {
             </div>
           </section>
         )}
+
+        {/* Recommended Products Section */}
+        <RecommendedProductsSection
+          currentProduct={product}
+          category={product.category}
+        />
 
         {/* CTA Section */}
         <section className="bg-gradient-to-r from-accent to-accent/80 rounded-lg p-8 sm:p-12 text-center text-white space-y-6">

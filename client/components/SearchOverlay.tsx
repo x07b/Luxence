@@ -164,9 +164,6 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                       <span className="text-xs bg-secondary text-muted-foreground px-2 py-1 rounded">
                         {product.category}
                       </span>
-                      <span className="font-futura font-bold text-accent">
-                        {product.price.toFixed(2)} TND
-                      </span>
                     </div>
                   </div>
                 </button>

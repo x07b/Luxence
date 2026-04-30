@@ -127,12 +127,19 @@ export default function Cart() {
                   Votre Panier
                 </h2>
 
+                {/* Message Textarea */}
+                <textarea
+                  placeholder="Ajouter un message à votre demande de devis (optionnel)"
+                  className="w-full px-4 py-3 rounded-lg border-2 border-border font-roboto focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20 resize-none"
+                  rows={4}
+                />
+
                 {/* Checkout Button */}
                 <Link
                   to="/checkout"
                   className="w-full flex items-center justify-center bg-accent hover:bg-accent/90 text-white px-6 py-3 rounded-lg font-futura font-bold transition-all duration-300 active:scale-95"
                 >
-                  Procéder au paiement
+                  Continuer vers le devis
                 </Link>
 
                 {/* Clear Cart Button */}
