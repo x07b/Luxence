@@ -17,6 +17,9 @@ import Checkout from "./pages/Checkout";
 import ProductDetail from "./pages/ProductDetail";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
+import NosValeurs from "./pages/NosValeurs";
+import DesignEthique from "./pages/DesignEthique";
+import FAQ from "./pages/FAQ";
 
 const Layout = ({ children }: { children: React.ReactNode }) => (
   <div className="flex flex-col min-h-screen">
@@ -32,7 +35,10 @@ const RedirectProduct = () => {
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
-  useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
+  useEffect(() => {
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  }, [pathname]);
   return null;
 };
 
@@ -115,6 +121,9 @@ const AppRoutes = () => {
           </Layout>
         }
       />
+      <Route path="/nos-valeurs" element={<Layout><NosValeurs /></Layout>} />
+      <Route path="/design-ethique" element={<Layout><DesignEthique /></Layout>} />
+      <Route path="/faq" element={<Layout><FAQ /></Layout>} />
       <Route path="/admin" element={<Admin />} />
       <Route
         path="*"

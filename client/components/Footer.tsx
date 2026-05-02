@@ -45,22 +45,22 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <a
-                  href="#"
+                <Link
+                  to="/nos-valeurs"
                   className="text-primary-foreground/80 hover:text-accent transition-all duration-300 flex items-center gap-2 group"
                 >
                   <span className="inline-block w-0 h-0.5 bg-accent group-hover:w-4 transition-all duration-300" />
                   Nos valeurs
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
+                <Link
+                  to="/design-ethique"
                   className="text-primary-foreground/80 hover:text-accent transition-all duration-300 flex items-center gap-2 group"
                 >
                   <span className="inline-block w-0 h-0.5 bg-accent group-hover:w-4 transition-all duration-300" />
                   Design éthique
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -82,13 +82,13 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <a
-                  href="#"
+                <Link
+                  to="/faq"
                   className="text-primary-foreground/80 hover:text-accent transition-all duration-300 flex items-center gap-2 group"
                 >
                   <span className="inline-block w-0 h-0.5 bg-accent group-hover:w-4 transition-all duration-300" />
                   FAQ
-                </a>
+                </Link>
               </li>
               <li>
                 <a
