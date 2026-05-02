@@ -1,7 +1,8 @@
 import "./global.css";
 
 import { createRoot } from "react-dom/client";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { useEffect } from "react";
 import { CartProvider } from "./contexts/CartContext";
 import { useVisitorTracking } from "./hooks/use-visitor-tracking";
 import { Header } from "./components/Header";
@@ -29,10 +30,18 @@ const RedirectProduct = () => {
   return <Navigate to="/products" replace />;
 };
 
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+  useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
+  return null;
+};
+
 const AppRoutes = () => {
   useVisitorTracking();
   return (
-    <Routes>
+    <>
+      <ScrollToTop />
+      <Routes>
       <Route
         path="/"
         element={
@@ -115,7 +124,8 @@ const AppRoutes = () => {
           </Layout>
         }
       />
-    </Routes>
+      </Routes>
+    </>
   );
 };
 
