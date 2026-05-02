@@ -1,4 +1,22 @@
+import { z } from "zod";
 import { pool } from "../lib/db.js";
+
+const specSchema = z.object({
+  label: z.string().trim().min(1).max(200),
+  value: z.string().trim().min(1).max(500),
+});
+
+const productSchema = z.object({
+  name: z.string().trim().min(1).max(300),
+  description: z.string().trim().min(1).max(5000),
+  price: z.coerce.number().min(0).max(1_000_000).optional().default(0),
+  category: z.string().trim().max(100).optional().default("Uncategorized"),
+  collectionId: z.string().max(100).nullable().optional(),
+  images: z.array(z.string().url().max(2000)).max(20).optional().default([]),
+  pdfFile: z.string().url().max(2000).nullable().optional(),
+  pdfFilename: z.string().max(300).nullable().optional(),
+  specifications: z.array(specSchema).max(50).optional().default([]),
+});
 
 interface Specification {
   label: string;
@@ -166,23 +184,11 @@ export async function createProduct(req: any, res: any) {
   const client = await pool.connect();
 
   try {
-    const {
-      name,
-      description,
-      price,
-      images,
-      category,
-      collectionId,
-      pdfFile,
-      pdfFilename,
-      specifications,
-    } = req.body;
-
-    if (!name || !description) {
-      return res.status(400).json({
-        error: "Missing required fields: name and description are required",
-      });
+    const parsed = productSchema.safeParse(req.body);
+    if (!parsed.success) {
+      return res.status(400).json({ error: "Données invalides", details: parsed.error.flatten() });
     }
+    const { name, description, price, images, category, collectionId, pdfFile, pdfFilename, specifications } = parsed.data;
 
     const slug = generateSlug(name);
     const id = `product-${Date.now()}`;

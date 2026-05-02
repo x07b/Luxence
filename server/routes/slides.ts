@@ -1,4 +1,17 @@
+import { z } from "zod";
 import { pool } from "../lib/db.js";
+
+const slideSchema = z.object({
+  image: z.string().url().max(2000),
+  alt: z.string().trim().max(200).optional().default("Hero slide"),
+  order: z.number().int().min(0).optional(),
+  title: z.string().trim().max(200).optional().default(""),
+  description: z.string().trim().max(1000).optional().default(""),
+  button1_text: z.string().trim().max(100).optional().default(""),
+  button1_link: z.string().trim().max(2000).optional().default(""),
+  button2_text: z.string().trim().max(100).optional().default(""),
+  button2_link: z.string().trim().max(2000).optional().default(""),
+});
 
 export interface HeroSlide {
   id: string;
@@ -44,21 +57,11 @@ export async function getHeroSlides(_req: any, res: any) {
 
 export async function createHeroSlide(req: any, res: any) {
   try {
-    const {
-      image,
-      alt,
-      order,
-      title,
-      description,
-      button1_text,
-      button1_link,
-      button2_text,
-      button2_link,
-    } = req.body;
-
-    if (!image) {
-      return res.status(400).json({ error: "Image URL is required" });
+    const parsed = slideSchema.safeParse(req.body);
+    if (!parsed.success) {
+      return res.status(400).json({ error: "Données invalides", details: parsed.error.flatten() });
     }
+    const { image, alt, order, title, description, button1_text, button1_link, button2_text, button2_link } = parsed.data;
 
     let orderIndex = order;
 
@@ -119,17 +122,11 @@ export async function updateHeroSlide(req: any, res: any) {
   try {
     const { id } = req.params;
 
-    const {
-      image,
-      alt,
-      order,
-      title,
-      description,
-      button1_text,
-      button1_link,
-      button2_text,
-      button2_link,
-    } = req.body;
+    const parsed = slideSchema.partial().safeParse(req.body);
+    if (!parsed.success) {
+      return res.status(400).json({ error: "Données invalides", details: parsed.error.flatten() });
+    }
+    const { image, alt, order, title, description, button1_text, button1_link, button2_text, button2_link } = parsed.data;
 
     const existing = await pool.query(
       `SELECT id FROM hero_slides WHERE id = $1`,

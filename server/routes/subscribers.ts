@@ -1,24 +1,27 @@
 import { Router } from "express";
+import { z } from "zod";
 import { pool } from "../lib/db.js";
 
 const router = Router();
 
+const newsletterSchema = z.object({
+  email: z.string().trim().email().max(254),
+});
+
 router.post("/newsletter", async (req, res) => {
   try {
-    const { email } = req.body;
-
-    if (!email) {
-      return res.status(400).json({ error: "Email is required" });
+    const parsed = newsletterSchema.safeParse(req.body);
+    if (!parsed.success) {
+      return res.status(400).json({ error: "Adresse email invalide" });
     }
+    const { email } = parsed.data;
 
     const result = await pool.query(
-      `
-      INSERT INTO newsletter_subscribers (email)
-      VALUES ($1)
-      ON CONFLICT (email) DO NOTHING
-      RETURNING *
-      `,
-      [email]
+      `INSERT INTO newsletter_subscribers (email)
+       VALUES ($1)
+       ON CONFLICT (email) DO NOTHING
+       RETURNING *`,
+      [email],
     );
 
     if (result.rows.length === 0) {

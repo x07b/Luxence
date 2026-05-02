@@ -1,4 +1,15 @@
+import { z } from "zod";
 import { pool } from "../lib/db.js";
+
+const sectionSchema = z.object({
+  title: z.string().trim().min(1).max(200),
+  content: z.string().trim().min(1).max(10000),
+  order: z.number().int().min(0).optional(),
+});
+
+const upsertSchema = z.object({
+  sections: z.array(sectionSchema).max(20),
+});
 
 export interface DetailSection {
   id?: string;
@@ -45,15 +56,15 @@ export async function upsertProductDetails(req: any, res: any) {
 
   try {
     const { productId } = req.params;
-    const { sections } = req.body;
-
     if (!productId) {
       return res.status(400).json({ error: "Product ID is required" });
     }
 
-    if (!Array.isArray(sections)) {
-      return res.status(400).json({ error: "Sections must be an array" });
+    const parsed = upsertSchema.safeParse(req.body);
+    if (!parsed.success) {
+      return res.status(400).json({ error: "Données invalides", details: parsed.error.flatten() });
     }
+    const { sections } = parsed.data;
 
     await client.query("BEGIN");
 
@@ -64,8 +75,7 @@ export async function upsertProductDetails(req: any, res: any) {
     );
 
     const sectionsToInsert = sections
-      .filter((s: any) => s.title && s.content)
-      .map((s: any, index: number) => ({
+      .map((s, index) => ({
         product_id: productId,
         title: s.title,
         content: s.content,

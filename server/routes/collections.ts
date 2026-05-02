@@ -1,4 +1,11 @@
+import { z } from "zod";
 import { pool } from "../lib/db.js";
+
+const collectionSchema = z.object({
+  name: z.string().trim().min(2).max(100),
+  description: z.string().trim().max(1000).optional().default(""),
+  image: z.string().url().max(2000).nullable().optional(),
+});
 
 interface Collection {
   id: string;
@@ -73,11 +80,11 @@ export async function getCollectionById(req: any, res: any) {
 // CREATE collection
 export async function createCollection(req: any, res: any) {
   try {
-    const { name, description, image } = req.body;
-
-    if (!name) {
-      return res.status(400).json({ error: "Collection name is required" });
+    const parsed = collectionSchema.safeParse(req.body);
+    if (!parsed.success) {
+      return res.status(400).json({ error: "Données invalides", details: parsed.error.flatten() });
     }
+    const { name, description, image } = parsed.data;
 
     const slug = name
       .toLowerCase()
@@ -117,7 +124,11 @@ export async function createCollection(req: any, res: any) {
 export async function updateCollection(req: any, res: any) {
   try {
     const { id } = req.params;
-    const { name, description, image } = req.body;
+    const parsed = collectionSchema.partial().safeParse(req.body);
+    if (!parsed.success) {
+      return res.status(400).json({ error: "Données invalides", details: parsed.error.flatten() });
+    }
+    const { name, description, image } = parsed.data;
 
     const existing = await pool.query(
       `SELECT id FROM collections WHERE id = $1`,

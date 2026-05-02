@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { pool } from "../lib/db.js";
+import { isValidOrderStatus } from "../lib/security.js";
 import {
   sendOrderConfirmationEmail,
   sendOrderAdminNotificationEmail,
@@ -252,6 +253,13 @@ export async function searchOrders(req: any, res: any) {
 export async function updateOrderStatus(req: any, res: any) {
   const { id } = req.params;
   const { status } = req.body;
+
+  if (!isValidOrderStatus(status)) {
+    return res.status(400).json({
+      success: false,
+      error: "Statut invalide. Valeurs acceptées : en attente, en cours, livré, annulé",
+    });
+  }
 
   const result = await pool.query(
     `UPDATE orders SET status = $1 WHERE id = $2 RETURNING *`,
