@@ -1,4 +1,5 @@
-import { CheckCircle } from "lucide-react";
+import { CheckCircle, ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export function AboutSection() {
   return (
@@ -84,6 +85,16 @@ export function AboutSection() {
                   </p>
                 </div>
               </div>
+            </div>
+
+            <div className="animate-fade-in pt-2" style={{ animationDelay: "300ms" }}>
+              <Link
+                to="/about"
+                className="inline-flex items-center gap-3 bg-primary hover:bg-primary/90 text-white px-7 py-3.5 rounded-lg font-futura font-bold transition-all duration-300 group hover:gap-4"
+              >
+                Découvrir notre histoire
+                <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
+              </Link>
             </div>
           </div>
         </div>
